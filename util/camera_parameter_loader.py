@@ -24,12 +24,17 @@ class CameraParameterLoader:
     def get_extrinsic(self, path):
         with open(path, 'r') as f:
             param_cam = json.load(f)['camera_data']
-            param_translation = param_cam['location_worldframe']
-            param_rotation = param_cam['quaternion_xyzw_worldframe']
+            T = param_cam['location_worldframe']
+            R = param_cam['quaternion_xyzw_worldframe']
+
+            print()
+            print(R)
+            print(T)
 
             mat_rotation = quaternion.as_rotation_matrix(
-                np.quaternion(param_rotation[3], param_rotation[0], param_rotation[1], param_rotation[2]))
-            mat_translation = np.array([[param_translation[0]], [param_translation[1]], [param_translation[2]]])
+                np.quaternion(R[3], R[0], R[1], R[2]))
+            mat_translation = np.array([[T[0]], [T[1]], [T[2]]])
             mat_extrinsic = np.concatenate(
                 [np.concatenate([mat_rotation, mat_translation], axis=1), np.array([[0, 0, 0, 1]])], axis=0)
+            
             return mat_extrinsic
